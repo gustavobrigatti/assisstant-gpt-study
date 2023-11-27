@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\GPTService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -24,8 +25,8 @@ class AdminController extends Controller
         ];
         $messages = [];
         if (Auth::user()->threadId != null){
-            $messageController = new MessagesController();
-            $responseGetThreadMessages = $messageController->getThreadMessages(Auth::user()->threadId);
+            $gptService = new GPTService();
+            $responseGetThreadMessages = $gptService->getThreadMessages(Auth::user()->threadId);
             foreach ($responseGetThreadMessages['messages'] as $responseGetThreadMessage){
                 if ($responseGetThreadMessage->role == 'assistant'){
                     $messages[] = view('admin.components.messages.receive', ['message' => $responseGetThreadMessage->content[0]->text->value])->render();
